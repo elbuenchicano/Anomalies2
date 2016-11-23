@@ -150,6 +150,7 @@
     <ClInclude Include="src\CUtil.h" />
     <ClInclude Include="src\dirent.h" />
     <ClInclude Include="src\fmSequence.h" />
+    <ClInclude Include="src\MainControl.h" />
     <ClInclude Include="src\MathUtils.h" />
     <ClInclude Include="src\Sequence.h" />
     <ClInclude Include="stdafx.h" />
@@ -159,6 +160,7 @@
     <ClCompile Include="Anomalies2.cpp" />
     <ClCompile Include="src\AlgoUtil.cpp" />
     <ClCompile Include="src\CUtil.cpp" />
+    <ClCompile Include="src\MainControl.cpp" />
     <ClCompile Include="src\MathUtils.cpp" />
     <ClCompile Include="src\Sequence.cpp" />
     <ClCompile Include="stdafx.cpp" />
