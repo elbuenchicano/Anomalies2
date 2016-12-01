@@ -277,6 +277,19 @@ void list_files_all(cutil_file_cont & sala, cutil_file_cont & salc, const char *
 }
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+std::list<cutil_file_cont> cutil_cont_split(cutil_file_cont &cont, double splits) {
+  std::list<cutil_file_cont> ans;
+  int  n_elem = static_cast<int>( ceil(cont.size() / splits) );
+  auto it     = cont.begin();
+  for (int i = 0; it != cont.end();) {
+    if (i++ % n_elem == 0) ans.resize(ans.size() + 1);
+    ans.rbegin()->push_back(*it++);
+  }
+  return ans;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 std::ostream & operator << (std::ostream & os, DirectoryNode node)
 {
   os << node._label << "-" << node._label << " ";

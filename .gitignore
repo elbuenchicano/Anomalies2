@@ -35,3 +35,8 @@ Debug/Anomalies2.pdb
 x64/Debug/Anomalies2.exe
 x64/Debug/Anomalies2.ilk
 x64/Debug/Anomalies2.pdb
+Anomalies2/Anomalies2.cpp
+Anomalies2/x64/Debug/MainControl.obj
+Anomalies2/x64/Debug/Support_Basic.obj
+Anomalies2/x64/Debug/Tracking.obj
+Anomalies2/x64/Debug/Tracklet.obj

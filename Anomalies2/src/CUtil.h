@@ -84,6 +84,9 @@ std::string cutil_string_trim(std::string);
 //join string vector in string
 std::string cutil_string_join(std::vector<std::string> &, int);
 
+
+
+
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
@@ -114,6 +117,9 @@ std::ostream & operator << (std::ostream & os, cuboid_dim c);
 #ifdef DIRENT_H
 //-----------------------------------------------------
 
+
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 typedef std::vector<std::string>	cutil_file_cont;// estructura donde se guarda el resultado STD!!
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ///Lista todos los archivos de una carpeta incluyendo ..                                                  
@@ -128,6 +134,10 @@ void list_files_all(cutil_file_cont & sal, const char *d, const char * token);
 ///Lista todos los archivos token de una carpeta y subcarpetas ademas de 
 ///listar tambien todas las subcarpetas
 void list_files_all(cutil_file_cont & sala, cutil_file_cont & salc, const char *d, const char * token);
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//split cutil_container into n parts
+std::list<cutil_file_cont> cutil_cont_split(cutil_file_cont &, double);
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //______________________________________________________________________________
