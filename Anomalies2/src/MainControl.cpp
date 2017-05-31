@@ -5,21 +5,20 @@
 MainControl::MainControl(string file) :
   main_prop_file_(file) {
 
-  string main_object_file;
+  string  activity_file;
 
   //reading the main file settings
 
   fs_main_.open(file, FileStorage::READ);
   assert(fs_main_.isOpened());
-  
-  fs_main_["main_object_file"]  >> main_object_file;
-  fs_main_["main_num_threads"]  >> num_threads_;
+
+
+  fs_main_["main_num_threads"]    >> num_threads_;
+  fs_main_["main_activity_file"]  >> activity_file;
 
   if (!num_threads_) num_threads_ = 1;
   
-  //loading objects
-  loadObjects(main_object_file, objects_, objects_rev_);
-  cout << "Reading: " << file << endl;
+  activities_ = loadActivityList(activity_file);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -29,85 +28,137 @@ void MainControl::run() {
   fs_main_["main_operation"] >> op;
   switch (op)
   {
-  case 0:
-    scripting();
+  case 0: 
+    train();
+    break;
   case 1:
-    //graphBuilding();
+    test();
     break;
   case 2:
-    //train();
+    validation();
     break;
   case 3:
-    //test();
     break;
   case 10:
-    //show();
     break;
   default:
     break;
   }
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void MainControl::structureBuiling( ) {
+void MainControl::train( ) {
 
-  double  distance_obj_thr,
-          distance_sub_thr;
-
-  float   rze;
-
-  int     time_life,
-          frame_step;
-
-  string  out_dir,
-          seq_dir,
+  string  seq_dir,
           seq_token,
-          out_token,
-          video_file;
+          out_dir;
 
-  double  jaccard;
-  
+  Ngrams_   ngram2;
+  Mat_<int> histograms;
+ 
   //............................................................................
-  fs_main_["structure_building_seq_dir"]          >> seq_dir;
-  fs_main_["structure_building_seq_token"]        >> seq_token;
-  fs_main_["structure_building_distance_sub_thr"] >> distance_sub_thr;
-  fs_main_["structure_building_distance_obj_thr"] >> distance_obj_thr;
-  fs_main_["structure_building_time_life"]        >> time_life;
-  fs_main_["structure_building_out_dir"]          >> out_dir;
-  fs_main_["structure_building_out_token"]        >> out_token;
-  fs_main_["structure_building_jaccard"]          >> jaccard;
-  fs_main_["structure_building_step"]             >> frame_step;
+  fs_main_["train_seq_dir"]   >> seq_dir;
+  fs_main_["train_seq_token"] >> seq_token;
   
   //............................................................................
   cutil_file_cont  file_list;
   list_files_all(file_list, seq_dir.c_str(), seq_token.c_str());
-  auto list_group = cutil_cont_split(file_list, num_threads_);
-    
-  for (auto & thr : list_group) {
-         
+  
+  //............................................................................
+  for (auto & file : file_list) 
+    loadActivities(file, ngram2, histograms, activities_);
+  
+  string name = cutil_LastName(seq_dir);
+
+  ngram2.save2files(  cutil_string_fullfile(
+                        list<string>({ seq_dir , name + "_NGh.txt"})), 
+                      cutil_string_fullfile(
+                        list<string>({ seq_dir , name + "_NGf.txt"}))
+                    );
+
+  FileStorage fs( 
+        cutil_string_fullfile(list<string>({ seq_dir , name + "_histos.yml" })), 
+        FileStorage::WRITE);
+
+  fs << "data" << histograms;
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void MainControl::test() {
+
+  string  histos,
+          ng_histo,
+          ng_freq,
+          seq_dir,
+          seq_token;
+
+  Ngrams_   ngram2;
+  Mat_<int> histograms;
+  
+  double      ngram_thr;
+  //............................................................................
+  fs_main_["test_histograms"] >> histos;
+  fs_main_["test_ng_histo"]   >> ng_histo;
+  fs_main_["test_ng_freq"]    >> ng_freq;
+
+  fs_main_["test_seq_dir"]    >> seq_dir;
+  fs_main_["test_seq_token"]  >> seq_token;
+
+  fs_main_["test_ngram_thr"]  >> ngram_thr;
+
+  //............................................................................
+  ngram2.load_structures( ng_histo, ng_freq );
+  FileStorage fs(histos, FileStorage::READ);
+  fs["data"] >> histograms;
+  
+  //............................................................................
+  DirectoryNode dir_test(seq_dir, nullptr);
+  list_files_all_tree(&dir_test, seq_token.c_str());
+
+  //............................................................................
+  
+  queue<DirectoryNode*> que;
+  que.push(&dir_test);
+  while (!que.empty()) {
+    auto front = que.front();
+    que.pop();
+    if (front->_listFile.size())
+      loadActivitiesTest( front->_listFile, front->_label, ngram2, 
+                          histograms, ngram_thr, activities_);
+    for (auto & sons : front->_sons)
+      que.push(sons);    
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void MainControl::validation() {
+  string  gt_token,
+          val_dir,
+          name;
+  
+  //............................................................................
+  fs_main_["validation_gt_dir"]   >> val_dir;
+
+  //MANDATORY GT MUST HAVE THE SAME NAME AS VIDEO TEST
+  fs_main_["validation_gt_token"] >> gt_token;
+
+  //............................................................................
+
+  cutil_file_cont files;
+  list_files(files, val_dir.c_str(), gt_token.c_str());
+  for (auto &file : files) {
+    name = cutil_LastName(file);
+    list<string> folder_path{ val_dir, name };
+    single_validation(file, cutil_string_fullfile(folder_path), name);
   }
 
-  //graphBuild( seq_file, video_file, str, rze, distance_obj_thr, distance_sub_thr,
-  //            time_life, jaccard);
+
 }
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-void MainControl::scripting() {
-
-  string  file;
-  int     cmd;
-
-  //............................................................................
-  fs_main_["scripting_file"] >> file;
-  fs_main_["scripting_cmd"]  >> cmd;
-
-  //............................................................................
-  typedef void (*pf) (string&);
-  vector<pf> functions{script_video};
-
-  if (file != "" && cmd < functions.size())
-    functions[cmd](file);
-  else
-    cout << "\n!error in file or command!";
-}
-

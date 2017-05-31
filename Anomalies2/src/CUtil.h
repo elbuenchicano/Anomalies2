@@ -75,6 +75,9 @@ std::string cutil_LastName(std::string &base);
 //returns the path step is the antecesor number
 std::string cutil_antecessor(std::string & path, short step);
 
+//returns the path of file  i.e c:/a/b/fl.txt ret a:/a/b
+std::string cutil_file_path(std::string & path);
+
 //create direcotries 
 void cutil_create_new_dir_all(std::string & base);
 
@@ -84,14 +87,14 @@ std::string cutil_string_trim(std::string);
 //join string vector in string
 std::string cutil_string_join(std::vector<std::string> &, int);
 
+//full path
+std::string cutil_string_fullfile( std::list<std::string> );
 
+//write into file appending into end of file
+void cutil_write_2_file_a(std::string & file, std::string &in);
 
-
-/////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
-//algorithms.................................................................
+//rite into a file 
+void cutil_write_2_file(std::string & file, std::string &in);
 
 
 /////////////////////////////////////////////////////////////////////////////

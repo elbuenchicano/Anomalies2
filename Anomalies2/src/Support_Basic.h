@@ -1,31 +1,80 @@
 #ifndef SUPPORT_BASIC_H_
 #define SUPPORT_BASIC_H_
 #include "Definitions.h"
-#include "Tracklet.h"
 #include "Sequence.h"
-
-///load objects from file
-//in : file
-//out: map and reverse map
-void loadObjects(std::string, std::map<std::string, int> &, std::map<int, std::string> &);
-
-//it transform int set to a single string
-string set2str(set<int> &);
-
-//this fucntion builds tracklets and theirs structure
-//list of files 
-//string out, source
-//double resize image, distance to object, distance to subject, jaccard
-//int time life
-void interaction_structure_building(  cutil_file_cont &, string &, string &,
-                                      double, double, double, double, int,
-                                      map<string, int> &, map<int, string> );
-  
-//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+#include "Ngrams.h"
+#include "AlgoUtil.h"
+///_____________________________________________________________________________
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-///scripting
+////////////////        GENERAL DEFINITIONS       //////////////////////////////
 
-void script_video( string & );
+typedef Ngrams<string> Ngrams_;
+
+///_____________________________________________________________________________
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//TRAIN
+
+//load activity set
+map<string, int> loadActivityList(string &);
+
+//load activitie list from file, file structure must be
+//{frame_number [scores] win_label}
+//sequence_file, ngram , histograms, activity keys
+void loadActivities(string &, Ngrams_ &, Mat_<int> &, map<string, int> &);
+
+
+///_____________________________________________________________________________
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//TEST
+
+//load activities for test
+//-list file
+//-parent path
+void loadActivitiesTest(  FileListType  &,  
+                          string        &, 
+                          Ngrams_       &, 
+                          Mat_<int>     &,
+                          double        ,
+                          map<string,int> &);
+
+
+///_____________________________________________________________________________
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+///////////////                 VALIDATION              ////////////////////////
+
+//validates a gt file with tracklet outputs 
+//-gt_file path
+//-folder path
+//-name
+void single_validation(string &, string &, string &);
+
+//Anomaly structure
+struct AnomalyGt {
+  int     id_ = 0,
+          ini_ = 0,
+          fin_ = 0,
+          type_ = 0;
+  string  desc_ = "";
+  //subject id
+  //initial frame
+  //final frame
+  //anomaly type
+  //anomaly description
+  AnomalyGt(int, int, int, int, string &);
+  AnomalyGt() {};
+  AnomalyGt operator =  (const AnomalyGt &);
+};
+bool operator == (const AnomalyGt &, const AnomalyGt &);
+bool operator <  (const AnomalyGt &, const AnomalyGt &);
+
+//load gt file into an ordered vector
+void loadGt      (string          &/*file*/,
+                  set<AnomalyGt>  &/*anomalies*/);
+
+
 
 #endif //

@@ -6,7 +6,9 @@
 
 int main(int arg, char **argv){
  
-  string file = arg < 2 ? "e:/research/anomalies/main.yml" : argv[1];
+  string tmp = "z:/tmp/anomalies/sibgrapi/main.yml";
+
+  string file = arg < 2 ?  tmp : argv[1];
 
   MainControl mc(file);
   mc.run();

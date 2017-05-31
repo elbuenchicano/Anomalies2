@@ -153,10 +153,9 @@
     <ClInclude Include="src\fmSequence.h" />
     <ClInclude Include="src\MainControl.h" />
     <ClInclude Include="src\MathUtils.h" />
-    <ClInclude Include="src\Sequence.h" />
+    <ClInclude Include="src\Ngrams.h" />
     <ClInclude Include="src\Support_Basic.h" />
     <ClInclude Include="src\Tracking.h" />
-    <ClInclude Include="src\Tracklet.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -166,10 +165,9 @@
     <ClCompile Include="src\CUtil.cpp" />
     <ClCompile Include="src\MainControl.cpp" />
     <ClCompile Include="src\MathUtils.cpp" />
-    <ClCompile Include="src\Sequence.cpp" />
+    <ClCompile Include="src\Ngrams.cpp" />
     <ClCompile Include="src\Support_Basic.cpp" />
     <ClCompile Include="src\Tracking.cpp" />
-    <ClCompile Include="src\Tracklet.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

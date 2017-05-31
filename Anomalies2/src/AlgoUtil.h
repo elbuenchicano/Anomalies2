@@ -25,6 +25,7 @@ private: //if i want create a c construct
 double supp_Precision         (Metric_units uni);
 
 //..............................................................................
+//true positive rate
 double supp_Recall            (Metric_units uni);
 
 //..............................................................................
